@@ -96,6 +96,12 @@ y_pred_lr <- predict(lr_regressor, newdata = test_data)
 cat("R-squared: ", summary(lr_regressor)$r.squared, "\n")
 cat("RMSE: ", sqrt(mean((test_data$Sales - y_pred_lr)^2)), "\n")
 
+# Plot linear regression
+library("car")
+png("linear_reg.png")
+avPlots(lr_regressor)
+dev.off()
+
 # Random Forest Regression
 
 # Load the randomForest library
@@ -125,3 +131,23 @@ rmse <- RMSE(y_pred_rf, test_data$Sales)
 # print the results
 print(paste0("R-squared: ", r2))
 print(paste0("RMSE: ", rmse))
+
+#train the model using a decision tree
+
+# Load the required libraries
+library(rpart)
+library(rpart.plot)
+
+# Split the data into training and test sets
+set.seed(123)
+train_index <- sample(seq_len(nrow(df)), size = 0.7 * nrow(df))
+train_data <- df[train_index, ]
+test_data <- df[-train_index, ]
+
+dt_regressor <- rpart(Sales ~ . - Influencer - `Social Media`, data = train_data)
+
+# Plot the decision tree
+rpart.plot(dt_regressor)
+
+summary(dt_regressor)
+
